@@ -1,17 +1,17 @@
 # Coding Challenge App
 
-A skeleton flask app to use for a coding challenge.
+A coding challenge solution to get the Git Profile for a user/organization
 
 ## Install:
 
-You can use a virtual environment (conda, venv, etc):
+Create the virtual environment with conda:
 ```
-conda env create -f environment.yml
+conda env create -f environment.yaml
 source activate user-profiles
 ```
 
-Or just pip install from the requirements file
-``` 
+Add the requirements:
+```
 pip install -r requirements.txt
 ```
 
@@ -21,7 +21,7 @@ pip install -r requirements.txt
 
 ```
 # start up local server
-python -m run 
+python -m run
 ```
 
 ### Making Requests
