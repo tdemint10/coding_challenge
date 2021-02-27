@@ -21,11 +21,15 @@ class GithubService:
         request_url = f"{BASE_URL}/{GET_REPOS_ENDPOINT}" % name
         app.logger.debug(f"request_url: {request_url}")
 
-        # make request
-        headers = {}
-        if token:
-            headers["Authorization"] = f"token {token}"
-        r = requests.get(request_url, headers=headers)
+        try:
+            # make request
+            headers = {}
+            if token:
+                headers["Authorization"] = f"token {token}"
+            r = requests.get(request_url, headers=headers)
+        except Exception as err:
+            app.logger.error(f"FAILURE - request failed - {request_url} - {err}")
+            raise Exception(f"FAILURE - request failed - {request_url}")
 
         if not r.status_code == 200:
             app.logger.error(f"FAILED to get GitHub Repositories for: {name}")
@@ -43,11 +47,15 @@ class GithubService:
         request_url = f"{BASE_URL}/{GET_FOLLOWERS_ENDPOINT}" % name
         app.logger.debug(f"request_url: {request_url}")
 
-        # make request
-        headers = {}
-        if token:
-            headers["Authorization"] = f"token {token}"
-        r = requests.get(request_url, headers=headers)
+        try:
+            # make request
+            headers = {}
+            if token:
+                headers["Authorization"] = f"token {token}"
+            r = requests.get(request_url, headers=headers)
+        except Exception as err:
+            app.logger.error(f"FAILURE - request failed - {request_url} - {err}")
+            raise Exception(f"FAILURE - request failed - {request_url}")
 
         if not r.status_code == 200:
             app.logger.error(f"FAILED to get GitHub Followers for: {name}")
@@ -65,11 +73,15 @@ class GithubService:
         request_url = f"{BASE_URL}/{GET_LANGUAGES_ENDPOINT}" % (name, repo)
         app.logger.debug(f"request_url: {request_url}")
 
-        # make request
-        headers = {}
-        if token:
-            headers["Authorization"] = f"token {token}"
-        r = requests.get(request_url, headers=headers)
+        try:
+            # make request
+            headers = {}
+            if token:
+                headers["Authorization"] = f"token {token}"
+            r = requests.get(request_url, headers=headers)
+        except Exception as err:
+            app.logger.error(f"FAILURE - request failed - {request_url} - {err}")
+            raise Exception(f"FAILURE - request failed - {request_url}")
 
         if not r.status_code == 200:
             app.logger.error(f"FAILED to get GitHub Languages for: {name}/{repo}")
@@ -87,18 +99,22 @@ class GithubService:
         request_url = f"{BASE_URL}/{GET_TOPICS_ENDPOINT}" % (name, repo)
         app.logger.debug(f"request_url: {request_url}")
 
-        # make request
-        headers = {"Accept": "application/vnd.github.mercy-preview+json"}
-        if token:
-            headers["Authorization"] = f"token {token}"
-        r = requests.get(request_url, headers=headers)
+        try:
+            # make request
+            headers = {"Accept": "application/vnd.github.mercy-preview+json"}
+            if token:
+                headers["Authorization"] = f"token {token}"
+            r = requests.get(request_url, headers=headers)
+        except:
+            app.logger.error(f"FAILURE - request failed - {request_url}")
+            raise Exception(f"FAILURE - request failed - {request_url}")
 
         if not r.status_code == 200:
             app.logger.error(f"FAILED to get GitHub Topics for: {name}/{repo}")
             return []
 
         # return data
-        return r.json()
+        return r.json()["names"]
 
 
     @staticmethod

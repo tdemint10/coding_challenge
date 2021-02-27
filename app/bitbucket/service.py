@@ -19,8 +19,12 @@ class BitbucketService:
         request_url = f"{BASE_URL}/{GET_REPOS_ENDPOINT}" % name
         app.logger.debug(f"request_url: {request_url}")
 
-        # make request
-        r = requests.get(request_url)
+        try:
+            # make request
+            r = requests.get(request_url)
+        except:
+            app.logger.error(f"FAILURE - request failed - {request_url}")
+            raise Exception(f"FAILURE - request failed - {request_url}")
 
         if not r.status_code == 200:
             app.logger.error(f"FAILED to get Bitbucket Repositories for: {name}")
@@ -38,8 +42,12 @@ class BitbucketService:
         request_url = f"{BASE_URL}/{GET_WATCHERS_ENDPOINT}" % (name, repo)
         app.logger.debug(f"request_url: {request_url}")
 
-        # make request
-        r = requests.get(request_url)
+        try:
+            # make request
+            r = requests.get(request_url)
+        except:
+            app.logger.error(f"FAILURE - request failed - {request_url}")
+            raise Exception(f"FAILURE - request failed - {request_url}")
 
         if not r.status_code == 200:
             app.logger.error(f"FAILED to get Bitbucket Watchers for: {name}/{repo}")
