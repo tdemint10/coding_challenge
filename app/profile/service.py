@@ -5,7 +5,7 @@ from app.bitbucket.service import BitbucketService
 
 class GitProfileService:
     @staticmethod
-    def get_profile(github_user: str, bitbucket_user: str):
+    def get_profile(github_token: str, github_user: str, bitbucket_user: str):
         app.logger.info(f"GitProfileService - get_profile - github_user: {github_user}, bitbucket_user: {bitbucket_user}")
 
         # create profile object to return
@@ -24,7 +24,7 @@ class GitProfileService:
         profile["topic_count"] = 0
         profile["watchers_count"] = 0
 
-        github_profile = GithubService.get_profile(github_user)
+        github_profile = GithubService.get_profile(github_token, github_user)
 
         profile["repo_count"] += github_profile["repo_count"]
         profile["original_repo_count"] += github_profile["original_repo_count"]
