@@ -1,19 +1,25 @@
 from app.routes import app
-from flask import Response
+from flask import jsonify, Response
 from flask_restx import Namespace, Resource
+
+from .service import BitbucketService
 
 
 api = Namespace("Bitbucket", description="Bitbucket Profile API")
 
 
-@api.route("/")
+@api.route("/<string:profileName>")
+@api.param("profileName", "Profile Name")
 class BitbucketResource(Resource):
     """ Bitbucket """
 
-    def get(self):
+    def get(self, profileName):
         """
-        Endpoint for Bitbucket
+        Get Bitbucket Profile
         """
 
-        app.logger.info("Bitbucket endpoint")
-        return Response("Bitbucket", status=200)
+        app.logger.info("GET Bitbucket Profile")
+
+        res = BitbucketService.get_bitbucket_profile(profileName)
+
+        return jsonify(res)
