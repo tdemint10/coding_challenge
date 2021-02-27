@@ -1,7 +1,9 @@
 from app.routes import app
 from flask import jsonify, Response
+from flask_accepts import responds
 from flask_restx import Namespace, Resource
 
+from .schema import GitHubProfileSchema
 from .service import GithubService
 
 
@@ -19,6 +21,7 @@ parser.add_argument('X-GITHUB-TOKEN', location='headers')
 class GithubResource(Resource):
     """ Github """
 
+    @responds(schema=GitHubProfileSchema)
     def get(self, profileName: str) -> Response:
         """
         Get GitHub Profile
