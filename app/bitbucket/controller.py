@@ -20,6 +20,6 @@ class BitbucketResource(Resource):
 
         app.logger.info("GET Bitbucket Profile")
 
-        res = BitbucketService.get_bitbucket_profile(profileName)
+        res = BitbucketService.get_profile(profileName)
 
         return jsonify(res)

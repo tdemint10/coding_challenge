@@ -50,7 +50,7 @@ class BitbucketService:
 
 
     @staticmethod
-    def get_bitbucket_profile(name: str):
+    def get_profile(name: str):
         app.logger.info(f"BitbucketService - get_bitbucket_profile - name: {name}")
 
         repos = BitbucketService.get_repos(name)
@@ -59,8 +59,9 @@ class BitbucketService:
         watchers_count = 0
 
         for repo in repos:
+            # add language if needed (always lowercase)
             if not repo["language"] in languages:
-                languages.append(repo["language"])
+                languages.append(repo["language"].lower())
 
             watchers_count += BitbucketService.get_watchers_count(name, repo["name"])
 
@@ -68,8 +69,7 @@ class BitbucketService:
             "user": name,
             "repo_count": len(repos),
             "languages": languages,
-            "language_count": len(languages),
-            "watchers_count": watcher_count
+            "watchers_count": watchers_count
         }
 
         return profile

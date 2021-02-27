@@ -20,6 +20,6 @@ class GithubResource(Resource):
 
         app.logger.info("GET GitHub Profile")
 
-        res = GithubService.get_github_profile(profileName)
+        res = GithubService.get_profile(profileName)
 
         return jsonify(res)

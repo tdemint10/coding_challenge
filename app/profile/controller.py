@@ -1,19 +1,26 @@
 from app.routes import app
-from flask import Response
+from flask import jsonify, Response
 from flask_restx import Namespace, Resource
 
+from .service import GitProfileService
 
-api = Namespace("Profile", description="Profile API")
+
+api = Namespace("GitProfile", description="Git Profile API")
 
 
-@api.route("/")
-class ProfileResource(Resource):
-    """ Profile """
+@api.route("/github/<string:githubUsername>/bitbucket/<string:bitbucketUsername>")
+@api.param("githubUsername", "GitHub Username")
+@api.param("bitbucketUsername", "Bitbucket Username")
+class GitProfileResource(Resource):
+    """ Git Profile """
 
-    def get(self):
+    def get(self, githubUsername, bitbucketUsername):
         """
-        Endpoint for Profile
+        Get Git Profile
         """
 
-        app.logger.info("Profile endpoint")
-        return Response("Profile", status=200)
+        app.logger.info("Get Git Profile")
+
+        res = GitProfileService.get_profile(githubUsername, bitbucketUsername)
+
+        return jsonify(res)
