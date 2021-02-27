@@ -14,7 +14,7 @@ GET_TOPICS_ENDPOINT = "repos/%s/%s/topics"
 
 class GithubService:
     @staticmethod
-    def get_repos(name: str):
+    def get_repos(token: str, name: str):
         app.logger.debug(f"GithubService - get_repos - name: {name}")
 
         # build url for the needed request
@@ -22,7 +22,10 @@ class GithubService:
         app.logger.debug(f"request_url: {request_url}")
 
         # make request
-        r = requests.get(request_url, auth=('tdemint10', ''))
+        headers = {}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        r = requests.get(request_url, headers=headers)
 
         if not r.status_code == 200:
             app.logger.error(f"FAILED to get GitHub Repositories for: {name}")
@@ -33,7 +36,7 @@ class GithubService:
 
 
     @staticmethod
-    def get_followers(name: str):
+    def get_followers(token: str, name: str):
         app.logger.debug(f"GithubService - get_followers - name: {name}")
 
         # build url for the needed request
@@ -41,7 +44,10 @@ class GithubService:
         app.logger.debug(f"request_url: {request_url}")
 
         # make request
-        r = requests.get(request_url, auth=('tdemint10', ''))
+        headers = {}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        r = requests.get(request_url, headers=headers)
 
         if not r.status_code == 200:
             app.logger.error(f"FAILED to get GitHub Followers for: {name}")
@@ -52,7 +58,7 @@ class GithubService:
 
 
     @staticmethod
-    def get_languages(name: str, repo: str):
+    def get_languages(token: str, name: str, repo: str):
         app.logger.debug(f"GithubService - get_languages - name: {name}, repo: {repo}")
 
         # build url for the needed request
@@ -60,7 +66,10 @@ class GithubService:
         app.logger.debug(f"request_url: {request_url}")
 
         # make request
-        r = requests.get(request_url, auth=('tdemint10', ''))
+        headers = {}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        r = requests.get(request_url, headers=headers)
 
         if not r.status_code == 200:
             app.logger.error(f"FAILED to get GitHub Languages for: {name}/{repo}")
@@ -71,7 +80,7 @@ class GithubService:
 
 
     @staticmethod
-    def get_topics(name: str, repo: str):
+    def get_topics(token: str, name: str, repo: str):
         app.logger.debug(f"GithubService - get_topics - name: {name}, repo: {repo}")
 
         # build url for the needed request
@@ -80,7 +89,9 @@ class GithubService:
 
         # make request
         headers = {"Accept": "application/vnd.github.mercy-preview+json"}
-        r = requests.get(request_url, auth=('tdemint10', ''), headers=headers)
+        if token:
+            headers["Authorization"] = f"token {token}"
+        r = requests.get(request_url, headers=headers)
 
         if not r.status_code == 200:
             app.logger.error(f"FAILED to get GitHub Topics for: {name}/{repo}")
@@ -91,11 +102,11 @@ class GithubService:
 
 
     @staticmethod
-    def get_profile(name: str):
+    def get_profile(token: str, name: str):
         app.logger.info(f"GithubService - get_github_profile - name: {name}")
 
-        followers = GithubService.get_followers(name)
-        repos = GithubService.get_repos(name)
+        followers = GithubService.get_followers(token, name)
+        repos = GithubService.get_repos(token, name)
 
         languages = []
         topics = []
@@ -110,12 +121,12 @@ class GithubService:
                 forked_repo_count += 1
 
             # add language if needed (always lowercase)
-            repo_languages = GithubService.get_languages(name, repo["name"])
+            repo_languages = GithubService.get_languages(token, name, repo["name"])
             for language in repo_languages:
-                if not language in languages:
+                if not language.lower() in languages:
                     languages.append(language.lower())
 
-            repo_topics = GithubService.get_topics(name, repo["name"])
+            repo_topics = GithubService.get_topics(token, name, repo["name"])
             for topic in repo_topics:
                 if not topic in topics:
                     topics.append(topic)

@@ -8,8 +8,14 @@ from .service import GithubService
 api = Namespace("Github", description="GitHub Profile API")
 
 
+# setup optional header
+parser = api.parser()
+parser.add_argument('X-GITHUB-TOKEN', location='headers')
+
+
 @api.route("/<string:profileName>")
 @api.param("profileName", "Profile Name")
+@api.expect(parser)
 class GithubResource(Resource):
     """ Github """
 
@@ -20,6 +26,7 @@ class GithubResource(Resource):
 
         app.logger.info("GET GitHub Profile")
 
-        res = GithubService.get_profile(profileName)
+        args = parser.parse_args()
+        res = GithubService.get_profile(args["X-GITHUB-TOKEN"], profileName)
 
-        return jsonify(res)
+        return res

@@ -60,7 +60,7 @@ class BitbucketService:
 
         for repo in repos:
             # add language if needed (always lowercase)
-            if not repo["language"] in languages:
+            if not repo["language"].lower() in languages:
                 languages.append(repo["language"].lower())
 
             watchers_count += BitbucketService.get_watchers_count(name, repo["name"])
