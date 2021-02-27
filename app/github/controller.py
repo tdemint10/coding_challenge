@@ -1,19 +1,25 @@
 from app.routes import app
-from flask import Response
+from flask import jsonify, Response
 from flask_restx import Namespace, Resource
+
+from .service import GithubService
 
 
 api = Namespace("Github", description="GitHub Profile API")
 
 
-@api.route("/")
+@api.route("/<string:profileName>")
+@api.param("profileName", "Profile Name")
 class GithubResource(Resource):
     """ Github """
 
-    def get(self):
+    def get(self, profileName: str) -> Response:
         """
-        Endpoint for GitHub
+        Get GitHub Profile
         """
 
-        app.logger.info("Github endpoint")
-        return Response("Github", status=200)
+        app.logger.info("GET GitHub Profile")
+
+        res = GithubService.get_github_profile(profileName)
+
+        return jsonify(res)
