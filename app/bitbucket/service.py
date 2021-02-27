@@ -55,18 +55,16 @@ class BitbucketService:
 
         repos = BitbucketService.get_repos(name)
 
-        languages = []
+        languages = set({})
         watchers_count = 0
 
         for repo in repos:
             # add language if needed (always lowercase)
-            if not repo["language"].lower() in languages:
-                languages.append(repo["language"].lower())
+            languages.add(repo["language"].lower())
 
             watchers_count += BitbucketService.get_watchers_count(name, repo["name"])
 
         profile = {
-            "user": name,
             "repo_count": len(repos),
             "languages": languages,
             "watchers_count": watchers_count

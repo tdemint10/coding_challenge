@@ -108,8 +108,8 @@ class GithubService:
         followers = GithubService.get_followers(token, name)
         repos = GithubService.get_repos(token, name)
 
-        languages = []
-        topics = []
+        languages = set({})
+        topics = set({})
         watchers_count = 0
 
         original_repo_count = 0
@@ -123,18 +123,15 @@ class GithubService:
             # add language if needed (always lowercase)
             repo_languages = GithubService.get_languages(token, name, repo["name"])
             for language in repo_languages:
-                if not language.lower() in languages:
-                    languages.append(language.lower())
+                languages.add(language.lower())
 
             repo_topics = GithubService.get_topics(token, name, repo["name"])
             for topic in repo_topics:
-                if not topic in topics:
-                    topics.append(topic)
+                topics.add(topic.lower())
 
             watchers_count += repo["watchers_count"]
 
         profile = {
-            "user": name,
             "follower_count": len(followers),
             "repo_count": len(repos),
             "original_repo_count": original_repo_count,
