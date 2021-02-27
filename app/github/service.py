@@ -99,6 +99,7 @@ class GithubService:
 
         languages = []
         topics = []
+        watchers_count = 0
 
         original_repo_count = 0
         forked_repo_count = 0
@@ -118,6 +119,8 @@ class GithubService:
                 if not topic in topics:
                     topics.append(topic)
 
+            watchers_count += repo["watchers_count"]
+
         profile = {
             "user": name,
             "follower_count": len(followers),
@@ -127,7 +130,8 @@ class GithubService:
             "languages": languages,
             "language_count": len(languages),
             "topics": topics,
-            "topic_count": len(topics)
+            "topic_count": len(topics),
+            "watchers_count": watcher_count
         }
 
         return profile

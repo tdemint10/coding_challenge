@@ -10,7 +10,7 @@ from app.profile import register_routes as attach_profile
 
 app = flask.Flask("user_profiles_api")
 logger = flask.logging.create_logger(app)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 api = Api(app, title="Git Profile API", version="0.0.1")
 
 
