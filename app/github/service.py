@@ -91,7 +91,7 @@ class GithubService:
 
 
     @staticmethod
-    def get_github_profile(name: str):
+    def get_profile(name: str):
         app.logger.info(f"GithubService - get_github_profile - name: {name}")
 
         followers = GithubService.get_followers(name)
@@ -109,10 +109,11 @@ class GithubService:
             else:
                 forked_repo_count += 1
 
+            # add language if needed (always lowercase)
             repo_languages = GithubService.get_languages(name, repo["name"])
             for language in repo_languages:
                 if not language in languages:
-                    languages.append(language)
+                    languages.append(language.lower())
 
             repo_topics = GithubService.get_topics(name, repo["name"])
             for topic in repo_topics:
@@ -128,10 +129,8 @@ class GithubService:
             "original_repo_count": original_repo_count,
             "forked_repo_count": forked_repo_count,
             "languages": languages,
-            "language_count": len(languages),
             "topics": topics,
-            "topic_count": len(topics),
-            "watchers_count": watcher_count
+            "watchers_count": watchers_count
         }
 
         return profile
