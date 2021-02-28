@@ -33,11 +33,12 @@ python -m run
 curl -i "http://127.0.0.1:5000/health-check"
 ```
 
+## Request Examples
 
 ### Bitbucket Profile Request
 
 ```
-curl -i GET "http://127.0.0.1:5000/api/bitbucket/profile?team=team"
+curl -i GET "http://127.0.0.1:5000/api/bitbucket/profile?team=mailchimp"
 ```
 
 **Params**
@@ -47,7 +48,7 @@ curl -i GET "http://127.0.0.1:5000/api/bitbucket/profile?team=team"
 ### GitHub Profile Request
 
 ```
-curl -i GET "http://127.0.0.1:5000/api/github/profile?organization=organization" \
+curl -i GET "http://127.0.0.1:5000/api/github/profile?organization=mailchimp" \
 --header "X-GITHUB-TOKEN: {{token}}"
 ```
 
@@ -61,7 +62,7 @@ curl -i GET "http://127.0.0.1:5000/api/github/profile?organization=organization"
 ### Git Profile Request
 
 ```
-curl -i GET "http://127.0.0.1:5000/api/profile?githubOrganization=organization&bitbucketTeam=team" \
+curl -i GET "http://127.0.0.1:5000/api/profile?githubOrganization=mailchimp&bitbucketTeam=mailchimp" \
 --header "X-GITHUB-TOKEN: {{token}}"
 ```
 
