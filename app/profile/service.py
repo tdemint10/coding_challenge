@@ -5,21 +5,21 @@ from app.bitbucket.service import BitbucketService
 
 class GitProfileService:
     @staticmethod
-    def get_profile(github_token: str, github_user: str, bitbucket_user: str):
-        app.logger.info(f"GitProfileService - get_profile - github_user: {github_user}, bitbucket_user: {bitbucket_user}")
+    def get_profile(github_token: str, github_org: str, bitbucket_team: str):
+        app.logger.info(f"GitProfileService - get_profile - github_org: {github_org}, bitbucket_team: {bitbucket_team}")
 
         # create profile object to return
-        profile = GitProfileService.create_profile()
+        profile = GitProfileService.create_empty_profile()
 
         # get individual profiles from services
-        github_profile = GithubService.get_profile(github_token, github_user)
-        bitbucket_profile = BitbucketService.get_profile(bitbucket_user)
+        github_profile = GithubService.get_profile(github_token, github_org)
+        bitbucket_profile = BitbucketService.get_profile(bitbucket_team)
 
         # combine profiles
         GitProfileService.add_to_profile(github_profile, profile)
         GitProfileService.add_to_profile(bitbucket_profile, profile)
 
-        # calculate end values
+        # calculate values
         profile["language_count"] = len(profile["languages"])
         profile["topic_count"] = len(profile["topics"])
 
@@ -27,7 +27,7 @@ class GitProfileService:
 
 
     @staticmethod
-    def create_profile():
+    def create_empty_profile():
         profile = {}
 
         # set default values
@@ -45,15 +45,15 @@ class GitProfileService:
 
 
     @staticmethod
-    def add_to_profile(profile, final_profile):
+    def add_to_profile(module_profile, git_profile):
         # loop through profile
-        for key in profile:
+        for key in module_profile:
 
             # add count value to existing count
-            if type(profile[key]) is int:
-                final_profile[key] += profile[key]
+            if type(module_profile[key]) is int:
+                git_profile[key] += module_profile[key]
 
             # add values to existing set
-            elif type(profile[key]) is set:
-                for value in profile[key]:
-                    final_profile[key].add(value)
+            elif type(module_profile[key]) is set:
+                for value in module_profile[key]:
+                    git_profile[key].add(value)

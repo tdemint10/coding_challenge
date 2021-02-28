@@ -11,18 +11,19 @@ api = Namespace("GitProfile", description="Git Profile API")
 
 # setup optional header
 parser = api.parser()
-parser.add_argument('X-GITHUB-TOKEN', location='headers')
+parser.add_argument("X-GITHUB-TOKEN", location="headers")
 
+# setup url args
+parser.add_argument("githubOrganization", required=True, location="args")
+parser.add_argument("bitbucketTeam", required=True, location="args")
 
-@api.route("/github/<string:githubUsername>/bitbucket/<string:bitbucketUsername>")
-@api.param("githubUsername", "GitHub Username")
-@api.param("bitbucketUsername", "Bitbucket Username")
+@api.route("/")
 @api.expect(parser)
 class GitProfileResource(Resource):
     """ Git Profile """
 
     @responds(schema=GitProfileSchema)
-    def get(self, githubUsername, bitbucketUsername):
+    def get(self):
         """
         Get Git Profile
         """
@@ -30,6 +31,6 @@ class GitProfileResource(Resource):
         app.logger.info("Get Git Profile")
 
         args = parser.parse_args()
-        res = GitProfileService.get_profile(args["X-GITHUB-TOKEN"], githubUsername, bitbucketUsername)
+        res = GitProfileService.get_profile(args["X-GITHUB-TOKEN"], args["githubOrganization"], args["bitbucketTeam"])
 
         return res

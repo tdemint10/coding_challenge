@@ -14,11 +14,11 @@ GET_TOPICS_ENDPOINT = "repos/%s/%s/topics"
 
 class GithubService:
     @staticmethod
-    def get_repos(token: str, name: str):
-        app.logger.debug(f"GithubService - get_repos - name: {name}")
+    def get_repos(token: str, organization: str):
+        app.logger.debug(f"GithubService - get_repos - organization: {organization}")
 
         # build url for the needed request
-        request_url = f"{BASE_URL}/{GET_REPOS_ENDPOINT}" % name
+        request_url = f"{BASE_URL}/{GET_REPOS_ENDPOINT}" % organization
         app.logger.debug(f"request_url: {request_url}")
 
         try:
@@ -32,7 +32,7 @@ class GithubService:
             raise Exception(f"FAILURE - request failed - {request_url}")
 
         if not r.status_code == 200:
-            app.logger.error(f"FAILED to get GitHub Repositories for: {name}")
+            app.logger.error(f"FAILED to get GitHub Repositories for: {organization}")
             return []
 
         # return data
@@ -40,11 +40,11 @@ class GithubService:
 
 
     @staticmethod
-    def get_followers(token: str, name: str):
-        app.logger.debug(f"GithubService - get_followers - name: {name}")
+    def get_followers(token: str, organization: str):
+        app.logger.debug(f"GithubService - get_followers - organization: {organization}")
 
         # build url for the needed request
-        request_url = f"{BASE_URL}/{GET_FOLLOWERS_ENDPOINT}" % name
+        request_url = f"{BASE_URL}/{GET_FOLLOWERS_ENDPOINT}" % organization
         app.logger.debug(f"request_url: {request_url}")
 
         try:
@@ -58,7 +58,7 @@ class GithubService:
             raise Exception(f"FAILURE - request failed - {request_url}")
 
         if not r.status_code == 200:
-            app.logger.error(f"FAILED to get GitHub Followers for: {name}")
+            app.logger.error(f"FAILED to get GitHub Followers for: {organization}")
             return []
 
         # return data
@@ -66,11 +66,11 @@ class GithubService:
 
 
     @staticmethod
-    def get_languages(token: str, name: str, repo: str):
-        app.logger.debug(f"GithubService - get_languages - name: {name}, repo: {repo}")
+    def get_languages(token: str, organization: str, repo: str):
+        app.logger.debug(f"GithubService - get_languages - organization: {organization}, repo: {repo}")
 
         # build url for the needed request
-        request_url = f"{BASE_URL}/{GET_LANGUAGES_ENDPOINT}" % (name, repo)
+        request_url = f"{BASE_URL}/{GET_LANGUAGES_ENDPOINT}" % (organization, repo)
         app.logger.debug(f"request_url: {request_url}")
 
         try:
@@ -84,7 +84,7 @@ class GithubService:
             raise Exception(f"FAILURE - request failed - {request_url}")
 
         if not r.status_code == 200:
-            app.logger.error(f"FAILED to get GitHub Languages for: {name}/{repo}")
+            app.logger.error(f"FAILED to get GitHub Languages for: {organization}/{repo}")
             return []
 
         # return data
@@ -92,11 +92,11 @@ class GithubService:
 
 
     @staticmethod
-    def get_topics(token: str, name: str, repo: str):
-        app.logger.debug(f"GithubService - get_topics - name: {name}, repo: {repo}")
+    def get_topics(token: str, organization: str, repo: str):
+        app.logger.debug(f"GithubService - get_topics - organization: {organization}, repo: {repo}")
 
         # build url for the needed request
-        request_url = f"{BASE_URL}/{GET_TOPICS_ENDPOINT}" % (name, repo)
+        request_url = f"{BASE_URL}/{GET_TOPICS_ENDPOINT}" % (organization, repo)
         app.logger.debug(f"request_url: {request_url}")
 
         try:
@@ -110,7 +110,7 @@ class GithubService:
             raise Exception(f"FAILURE - request failed - {request_url}")
 
         if not r.status_code == 200:
-            app.logger.error(f"FAILED to get GitHub Topics for: {name}/{repo}")
+            app.logger.error(f"FAILED to get GitHub Topics for: {organization}/{repo}")
             return []
 
         # return data
@@ -118,43 +118,42 @@ class GithubService:
 
 
     @staticmethod
-    def get_profile(token: str, name: str):
-        app.logger.info(f"GithubService - get_github_profile - name: {name}")
+    def get_profile(token: str, organization: str):
+        app.logger.info(f"GithubService - get_github_profile - organization: {organization}")
 
-        followers = GithubService.get_followers(token, name)
-        repos = GithubService.get_repos(token, name)
+        # create profile object to return
+        profile = GithubService.create_empty_profile()
 
-        languages = set({})
-        topics = set({})
-        watchers_count = 0
+        # populate profile values
+        profile["follower_count"] = len(GithubService.get_followers(token, organization))
+        repos = GithubService.get_repos(token, organization)
 
-        original_repo_count = 0
-        forked_repo_count = 0
+        # update values for each individual repo
         for repo in repos:
             if repo["fork"]:
-                original_repo_count += 1
+                profile["forked_repo_count"] += 1
             else:
-                forked_repo_count += 1
+                profile["original_repo_count"] += 1
 
-            # add language if needed (always lowercase)
-            repo_languages = GithubService.get_languages(token, name, repo["name"])
-            for language in repo_languages:
-                languages.add(language.lower())
+            [profile["languages"].add(value.lower()) for value in GithubService.get_languages(token, organization, repo["name"])]
+            [profile["topics"].add(value.lower()) for value in GithubService.get_topics(token, organization, repo["name"])]
 
-            repo_topics = GithubService.get_topics(token, name, repo["name"])
-            for topic in repo_topics:
-                topics.add(topic.lower())
+            profile["watchers_count"] += repo["watchers_count"]
 
-            watchers_count += repo["watchers_count"]
+        return profile
 
-        profile = {
-            "follower_count": len(followers),
-            "repo_count": len(repos),
-            "original_repo_count": original_repo_count,
-            "forked_repo_count": forked_repo_count,
-            "languages": languages,
-            "topics": topics,
-            "watchers_count": watchers_count
-        }
+
+    @staticmethod
+    def create_empty_profile():
+        profile = {}
+
+        # set default values
+        profile["follower_count"] = 0
+        profile["repo_count"] = 0
+        profile["original_repo_count"] = 0
+        profile["forked_repo_count"] = 0
+        profile["languages"] = set({})
+        profile["topics"] = set({})
+        profile["watchers_count"] = 0
 
         return profile
