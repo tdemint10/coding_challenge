@@ -26,11 +26,13 @@ pip install -r requirements.txt
 python -m run
 ```
 
+
 ### Health Check
 
 ```
 curl -i "http://127.0.0.1:5000/health-check"
 ```
+
 
 ### Bitbucket Profile Request
 
@@ -39,32 +41,41 @@ curl -i GET "http://127.0.0.1:5000/api/bitbucket/profile?team=team"
 ```
 
 **Params**
-- team **(required)**: Name of the Bitbucket team that you want to retrieve the profile of
+- team **(required)** - Name of the Bitbucket team that you want to retrieve the profile of
+
 
 ### GitHub Profile Request
 
 ```
-curl -i GET "http://127.0.0.1:5000/api/github/profile?organization=organization" --header "X-GITHUB-TOKEN: {{token}}"
+curl -i GET "http://127.0.0.1:5000/api/github/profile?organization=organization" \
+--header "X-GITHUB-TOKEN: {{token}}"
 ```
 
 **Headers**
-- X-GITHUB-TOKEN: User generated token from GitHub. Recommended to avoid rate limits on the GitHub API. Create token here: [GitHub Tokens](https://github.com/settings/tokens)
+- X-GITHUB-TOKEN - User generated token from GitHub. Recommended to avoid rate limits on the GitHub API. Create token here: [GitHub Tokens](https://github.com/settings/tokens)
 
 **Params**
-- organization **(required)**: Name of the GitHub organization that you want to retrieve the profile of
+- organization **(required)** - Name of the GitHub organization that you want to retrieve the profile of
+
 
 ### Git Profile Request
 
 ```
-curl -i GET "http://127.0.0.1:5000/api/profile?githubOrganization=organization&bitbucketTeam=team" --header "X-GITHUB-TOKEN: {{token}}"
+curl -i GET "http://127.0.0.1:5000/api/profile?githubOrganization=organization&bitbucketTeam=team" \
+--header "X-GITHUB-TOKEN: {{token}}"
 ```
 
 **Headers**
-- X-GITHUB-TOKEN: User generated token from GitHub. Recommended to avoid rate limits on the GitHub API. Create token here: [GitHub Tokens](https://github.com/settings/tokens)
+- X-GITHUB-TOKEN - User generated token from GitHub. Recommended to avoid rate limits on the GitHub API. Create token here: [GitHub Tokens](https://github.com/settings/tokens)
 
 **Params**
-- bitbucketTeam **(required)**: Name of the Bitbucket team that you want to retrieve the profile of
-- githubOrganization **(required)**: Name of the GitHub organization that you want to retrieve the profile of
+- bitbucketTeam **(required)** - Name of the Bitbucket team that you want to retrieve the profile of
+- githubOrganization **(required)** - Name of the GitHub organization that you want to retrieve the profile of
 
 
 ## Next Steps
+
+- Implement caching on requests to improve speed
+- Implement retry logic for failed API requests
+- Improve error handling for different possible API responses
+- Increase negative path testing
