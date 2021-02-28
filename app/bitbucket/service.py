@@ -1,4 +1,5 @@
 from app.routes import app
+from app.exceptions import ForbiddenException
 
 import requests
 
@@ -19,16 +20,15 @@ class BitbucketService:
         request_url = f"{BASE_URL}/{GET_REPOS_ENDPOINT}" % team
         app.logger.debug(f"request_url: {request_url}")
 
-        try:
-            # make request
-            r = requests.get(request_url)
-        except:
-            app.logger.error(f"FAILURE - request failed - {request_url}")
-            raise Exception(f"FAILURE - request failed - {request_url}")
+        # make request
+        r = requests.get(request_url)
 
-        if not r.status_code == 200:
+        if r.status_code == 403:
+            app.logger.error("FAILED - Bitbucket Forbidden")
+            raise ForbiddenException(f"FAILED - Access Forbidden to Bitbucket Team: {team}. (Bitbucket API rate limit may be exceeded)")
+        elif not r.status_code == 200:
             app.logger.error(f"FAILED to get Bitbucket Repositories for: {team}")
-            return []
+            raise Exception(f"FAILURE - request failed - {request_url}")
 
         # return data
         return r.json()["values"]
@@ -42,16 +42,15 @@ class BitbucketService:
         request_url = f"{BASE_URL}/{GET_WATCHERS_ENDPOINT}" % (team, repo)
         app.logger.debug(f"request_url: {request_url}")
 
-        try:
-            # make request
-            r = requests.get(request_url)
-        except:
-            app.logger.error(f"FAILURE - request failed - {request_url}")
-            raise Exception(f"FAILURE - request failed - {request_url}")
+        # make request
+        r = requests.get(request_url)
 
-        if not r.status_code == 200:
+        if r.status_code == 403:
+            app.logger.error("FAILED - Bitbucket Forbidden")
+            raise ForbiddenException(f"FAILED - Access Forbidden to Bitbucket Team: {team}. (Bitbucket API rate limit may be exceeded)")
+        elif not r.status_code == 200:
             app.logger.error(f"FAILED to get Bitbucket Watchers for: {team}/{repo}")
-            return 0
+            raise Exception(f"FAILURE - request failed - {request_url}")
 
         # return watchers
         return r.json()["size"]

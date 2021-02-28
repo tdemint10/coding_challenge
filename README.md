@@ -77,6 +77,7 @@ curl -i GET "http://127.0.0.1:5000/api/profile?githubOrganization=mailchimp&bitb
 ## Next Steps
 
 - Implement caching on requests to improve speed
+- Run GitHub requests in parallel to improve speed
 - Implement retry logic for failed API requests
-- Improve error handling for different possible API responses
+- Improve error handling to cover more possible errors
 - Increase negative path testing
