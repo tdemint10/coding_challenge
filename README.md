@@ -35,7 +35,7 @@ curl -i "http://127.0.0.1:5000/health-check"
 
 ### Swagger
 
-The Git Profile API also be accessed directly through Swagger: [Git Profile API](http://127.0.0.1:5000/)
+The Git Profile API can also be accessed directly through Swagger: [Git Profile API](http://127.0.0.1:5000/)
 
 ## Request Examples
 
@@ -44,7 +44,7 @@ The Git Profile API also be accessed directly through Swagger: [Git Profile API]
 ### Bitbucket Profile Request
 
 ```
-curl -i "http://127.0.0.1:5000/api/bitbucket/profile?team=mailchimp"
+curl -i "http://127.0.0.1:5000/bitbucket/profile?team=mailchimp"
 ```
 
 **Params**
@@ -54,7 +54,7 @@ curl -i "http://127.0.0.1:5000/api/bitbucket/profile?team=mailchimp"
 ### GitHub Profile Request
 
 ```
-curl -i "http://127.0.0.1:5000/api/github/profile?organization=mailchimp" \
+curl -i "http://127.0.0.1:5000/github/profile?organization=mailchimp" \
 --header "X-GITHUB-TOKEN: {{token}}"
 ```
 
@@ -68,7 +68,7 @@ curl -i "http://127.0.0.1:5000/api/github/profile?organization=mailchimp" \
 ### Git Profile Request
 
 ```
-curl -i "http://127.0.0.1:5000/api/profile/?githubOrganization=mailchimp&bitbucketTeam=mailchimp" \
+curl -i "http://127.0.0.1:5000/profile/?githubOrganization=mailchimp&bitbucketTeam=mailchimp" \
 --header "X-GITHUB-TOKEN: {{token}}"
 ```
 
@@ -87,7 +87,7 @@ curl -i "http://127.0.0.1:5000/api/profile/?githubOrganization=mailchimp&bitbuck
   - Run external requests in parallel
 - Error handling
   - Add retry logic on failed external requests (when necessary)
-  - Extend Exceptions to handle more case
+  - Extend Exceptions to handle more cases
   - Improve error messages
 - Functionality
   - Add header for Bitbucket API access token

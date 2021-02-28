@@ -1,7 +1,7 @@
 BASE_ROUTE = "bitbucket"
 
 
-def register_routes(api, app, root="api"):
+def register_routes(api, app):
     from .controller import api as bitbucket_api
 
-    api.add_namespace(bitbucket_api, path=f"/{root}/{BASE_ROUTE}")
+    api.add_namespace(bitbucket_api, path=f"/{BASE_ROUTE}")

@@ -10,16 +10,16 @@ from .service import BitbucketService
 
 api = Namespace("Bitbucket", description="Bitbucket Profile API")
 
-# setup required args
+# argument parser for incoming requests
 parser = api.parser()
 parser.add_argument("team", required=True, location="args")
 
 
 @api.route("/profile")
-@api.expect(parser)
 class BitbucketResource(Resource):
     """ Bitbucket """
 
+    @api.expect(parser)
     @responds(schema=BitbucketProfileSchema)
     def get(self):
         """
@@ -28,13 +28,13 @@ class BitbucketResource(Resource):
 
         app.logger.info("GET Bitbucket Profile")
 
+        # retrieve args
         args = parser.parse_args()
 
+        # try to build the BitbucketProfile and return correct status
         try:
-            res = BitbucketService.get_profile(args["team"])
+            return BitbucketService.get_profile(args["team"])
         except ForbiddenException as err:
             return Response(f"ERROR - {err}", status=403)
         except Exception as err:
             return Response(f"ERROR - {err}", status=500)
-
-        return res

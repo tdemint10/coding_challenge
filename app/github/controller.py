@@ -11,19 +11,17 @@ from .service import GithubService
 api = Namespace("Github", description="GitHub Profile API")
 
 
-# setup optional header
+# header/argument parser for incoming requests
 parser = api.parser()
 parser.add_argument("X-GITHUB-TOKEN", location="headers")
-
-# setup required args
 parser.add_argument("organization", required=True, location="args")
 
 
 @api.route("/profile")
-@api.expect(parser)
 class GithubResource(Resource):
     """ Github """
 
+    @api.expect(parser)
     @responds(schema=GitHubProfileSchema)
     def get(self) -> Response:
         """
@@ -32,13 +30,13 @@ class GithubResource(Resource):
 
         app.logger.info("GET GitHub Profile")
 
+        # retrieve args
         args = parser.parse_args()
 
+        # try to build the GithubProfile and return correct status
         try:
-            res = GithubService.get_profile(args["X-GITHUB-TOKEN"], args["organization"])
+            return GithubService.get_profile(args["X-GITHUB-TOKEN"], args["organization"])
         except ForbiddenException as err:
             return Response(f"ERROR - {err}", status=403)
         except Exception as err:
             return Response(f"ERROR - {err}", status=500)
-
-        return res
