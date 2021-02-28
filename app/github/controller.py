@@ -2,7 +2,7 @@ from app.routes import app
 from app.exceptions import ForbiddenException
 from flask import jsonify, Response
 from flask_accepts import responds
-from flask_restx import Namespace, Resource
+from flask_restx import fields, Namespace, Resource
 
 from .schema import GitHubProfileSchema
 from .service import GithubService
@@ -10,6 +10,16 @@ from .service import GithubService
 
 api = Namespace("Github", description="GitHub Profile API")
 
+# create response model for docs
+response_model = api.model("GithubProfile", {
+    "followerCount": fields.Integer,
+    "repoCount": fields.Integer,
+    "originalRepoCount": fields.Integer,
+    "forkedRepoCount": fields.Integer,
+    "languages": fields.List(fields.String),
+    "topics": fields.List(fields.String),
+    "watchersCount": fields.Integer
+})
 
 # header/argument parser for incoming requests
 parser = api.parser()
@@ -22,6 +32,12 @@ class GithubResource(Resource):
     """ Github """
 
     @api.expect(parser)
+    @api.response(200, "Success", response_model)
+    @api.doc(responses={
+        400: "Bad Request",
+        403: "Forbidden",
+        500: "Internal Error"
+    })
     @responds(schema=GitHubProfileSchema)
     def get(self) -> Response:
         """

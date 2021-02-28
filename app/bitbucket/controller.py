@@ -2,13 +2,21 @@ from app.routes import app
 from app.exceptions import ForbiddenException
 from flask import jsonify, Response
 from flask_accepts import responds
-from flask_restx import Namespace, Resource
+from flask_restx import fields, Namespace, Resource
 
 from .schema import BitbucketProfileSchema
 from .service import BitbucketService
 
 
 api = Namespace("Bitbucket", description="Bitbucket Profile API")
+
+# create response model for docs
+response_model = api.model("BitbucketProfile", {
+    "followerCount": fields.Integer,
+    "repoCount": fields.Integer,
+    "languages": fields.List(fields.String),
+    "watchersCount": fields.Integer
+})
 
 # argument parser for incoming requests
 parser = api.parser()
@@ -20,6 +28,12 @@ class BitbucketResource(Resource):
     """ Bitbucket """
 
     @api.expect(parser)
+    @api.response(200, "Success", response_model)
+    @api.doc(responses={
+        400: "Bad Request",
+        403: "Forbidden",
+        500: "Internal Error"
+    })
     @responds(schema=BitbucketProfileSchema)
     def get(self):
         """
