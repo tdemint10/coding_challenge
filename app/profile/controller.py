@@ -1,4 +1,5 @@
 from app.routes import app
+from app.exceptions import ForbiddenException
 from flask import jsonify, Response
 from flask_accepts import responds
 from flask_restx import Namespace, Resource
@@ -31,6 +32,12 @@ class GitProfileResource(Resource):
         app.logger.info("Get Git Profile")
 
         args = parser.parse_args()
-        res = GitProfileService.get_profile(args["X-GITHUB-TOKEN"], args["githubOrganization"], args["bitbucketTeam"])
+
+        try:
+            res = GitProfileService.get_profile(args["X-GITHUB-TOKEN"], args["githubOrganization"], args["bitbucketTeam"])
+        except ForbiddenException as err:
+            return Response(f"ERROR - {err}", status=403)
+        except Exception as err:
+            return Response(f"ERROR - {err}", status=500)
 
         return res
