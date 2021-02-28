@@ -33,12 +33,20 @@ python -m run
 curl -i "http://127.0.0.1:5000/health-check"
 ```
 
+### Swagger
+
+[Git Profile API](http://127.0.0.1:5000/)
+
+The Git Profile API Documentation can be seen generated automatically on this Swagger page. The requests can also be run directly here.
+
 ## Request Examples
+
+*Note: I highly recommend generating a GitHub Token ([Create Token](https://github.com/settings/tokens)), otherwise the rate limit will greatly reduce the amount of times you can run these requests*
 
 ### Bitbucket Profile Request
 
 ```
-curl -i GET "http://127.0.0.1:5000/api/bitbucket/profile?team=mailchimp"
+curl -i "http://127.0.0.1:5000/bitbucket/profile?team=mailchimp"
 ```
 
 **Params**
@@ -48,7 +56,7 @@ curl -i GET "http://127.0.0.1:5000/api/bitbucket/profile?team=mailchimp"
 ### GitHub Profile Request
 
 ```
-curl -i GET "http://127.0.0.1:5000/api/github/profile?organization=mailchimp" \
+curl -i "http://127.0.0.1:5000/github/profile?organization=mailchimp" \
 --header "X-GITHUB-TOKEN: {{token}}"
 ```
 
@@ -62,7 +70,7 @@ curl -i GET "http://127.0.0.1:5000/api/github/profile?organization=mailchimp" \
 ### Git Profile Request
 
 ```
-curl -i GET "http://127.0.0.1:5000/api/profile?githubOrganization=mailchimp&bitbucketTeam=mailchimp" \
+curl -i "http://127.0.0.1:5000/profile/?githubOrganization=mailchimp&bitbucketTeam=mailchimp" \
 --header "X-GITHUB-TOKEN: {{token}}"
 ```
 
@@ -76,11 +84,18 @@ curl -i GET "http://127.0.0.1:5000/api/profile?githubOrganization=mailchimp&bitb
 
 ## Next Steps
 
-- Implement caching on requests to improve speed
-- Run external API requests in parallel to improve speed
-- Implement retry logic for failed API requests
-- Improve error handling to cover more possible errors
-- Add handling for Bitbucket access token
+- Improve speed
+  - Add caching
+  - Run external requests in parallel
+- Error handling
+  - Add retry logic on failed external requests (when necessary)
+  - Extend Exceptions to handle more cases
+  - Improve error messages
+- Functionality
+  - Add header for Bitbucket API access token
+  - Input validation
+  - Abstract individual modules from the GitProfileService to simplify extending in the future
+- Testing (see below)
 
 ## Testing Plan
 

@@ -32,6 +32,7 @@ class BitbucketService:
             # make request
             r = requests.get(request_url)
 
+            # handle bad response
             if r.status_code == 403:
                 app.logger.error("FAILED - Bitbucket Forbidden")
                 raise ForbiddenException(f"FAILED - Access Forbidden to Bitbucket Team: {team}. (Bitbucket API rate limit may be exceeded)")
@@ -43,7 +44,7 @@ class BitbucketService:
             repos.extend(r.json()["values"])
             page += 1
 
-
+            # exit loop if there are no more pages of data
             if not "next" in r.json():
                 next_page_exists = False
 
@@ -62,6 +63,7 @@ class BitbucketService:
         # make request
         r = requests.get(request_url)
 
+        # handle bad response
         if r.status_code == 403:
             app.logger.error("FAILED - Bitbucket Forbidden")
             raise ForbiddenException(f"FAILED - Access Forbidden to Bitbucket Team: {team}. (Bitbucket API rate limit may be exceeded)")
@@ -69,7 +71,7 @@ class BitbucketService:
             app.logger.error(f"FAILED to get Bitbucket Watchers for: {team}/{repo}")
             raise Exception(f"FAILURE - request failed - {request_url}")
 
-        # return follower count
+        # return follower count ("size" only exists with paginated results)
         if "size" in r.json():
             return r.json()["size"]
         else:
@@ -87,6 +89,7 @@ class BitbucketService:
         # make request
         r = requests.get(request_url)
 
+        # handle bad response
         if r.status_code == 403:
             app.logger.error("FAILED - Bitbucket Forbidden")
             raise ForbiddenException(f"FAILED - Access Forbidden to Bitbucket Team: {team}. (Bitbucket API rate limit may be exceeded)")
@@ -94,7 +97,7 @@ class BitbucketService:
             app.logger.error(f"FAILED to get Bitbucket Watchers for: {team}/{repo}")
             raise Exception(f"FAILURE - request failed - {request_url}")
 
-        # return watchers
+        # return watchers ("size" only exists with paginated results)
         if "size" in r.json():
             return r.json()["size"]
         else:
@@ -119,6 +122,8 @@ class BitbucketService:
             profile["languages"].add(repo["language"].lower())
 
             profile["watchers_count"] += BitbucketService.get_watchers_count(team, repo["name"])
+
+        app.logger.debug(f"BitbucketService - profile - {profile}")
 
         return profile
 

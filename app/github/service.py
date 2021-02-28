@@ -28,6 +28,7 @@ class GithubService:
             headers["Authorization"] = f"token {token}"
         r = requests.get(request_url, headers=headers)
 
+        # handle bad response
         if r.status_code == 403:
             app.logger.error("FAILED - GitHub Forbidden")
             raise ForbiddenException(f"FAILED - Access Forbidden to Github Organization: {organization}. (GitHub API rate limit may be exceeded)")
@@ -53,6 +54,7 @@ class GithubService:
             headers["Authorization"] = f"token {token}"
         r = requests.get(request_url, headers=headers)
 
+        # handle bad response
         if r.status_code == 403:
             app.logger.error("FAILED - GitHub Forbidden")
             raise ForbiddenException(f"FAILED - Access Forbidden to Github Organization: {organization}. (GitHub API rate limit may be exceeded)")
@@ -78,6 +80,7 @@ class GithubService:
             headers["Authorization"] = f"token {token}"
         r = requests.get(request_url, headers=headers)
 
+        # handle bad response
         if r.status_code == 403:
             app.logger.error("FAILED - GitHub Forbidden")
             raise ForbiddenException(f"FAILED - Access Forbidden to Github Organization: {organization}. (GitHub API rate limit may be exceeded)")
@@ -103,6 +106,7 @@ class GithubService:
             headers["Authorization"] = f"token {token}"
         r = requests.get(request_url, headers=headers)
 
+        # handle bad response
         if r.status_code == 403:
             app.logger.error("FAILED - GitHub Forbidden")
             raise ForbiddenException(f"FAILED - Access Forbidden to Github Organization: {organization}. (GitHub API rate limit may be exceeded)")
@@ -137,6 +141,8 @@ class GithubService:
             [profile["topics"].add(value.lower()) for value in GithubService.get_topics(token, organization, repo["name"])]
 
             profile["watchers_count"] += repo["watchers_count"]
+
+        app.logger.debug(f"GithubService - profile - {profile}")
 
         return profile
 

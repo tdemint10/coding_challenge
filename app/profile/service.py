@@ -23,6 +23,8 @@ class GitProfileService:
         profile["language_count"] = len(profile["languages"])
         profile["topic_count"] = len(profile["topics"])
 
+        app.logger.debug(f"GitProfileService - profile - {profile}")
+
         return profile
 
 
