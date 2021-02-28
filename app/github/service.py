@@ -126,6 +126,7 @@ class GithubService:
         repos = GithubService.get_repos(token, organization)
 
         # update values for each individual repo
+        profile["repo_count"] = len(repos)
         for repo in repos:
             if repo["fork"]:
                 profile["forked_repo_count"] += 1
