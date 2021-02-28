@@ -1,4 +1,5 @@
 from app.routes import app
+from app.exceptions import ForbiddenException
 from flask import jsonify, Response
 from flask_accepts import responds
 from flask_restx import Namespace, Resource
@@ -28,6 +29,12 @@ class BitbucketResource(Resource):
         app.logger.info("GET Bitbucket Profile")
 
         args = parser.parse_args()
-        res = BitbucketService.get_profile(args["team"])
+
+        try:
+            res = BitbucketService.get_profile(args["team"])
+        except ForbiddenException as err:
+            return Response(f"ERROR - {err}", status=403)
+        except Exception as err:
+            return Response(f"ERROR - {err}", status=500)
 
         return res

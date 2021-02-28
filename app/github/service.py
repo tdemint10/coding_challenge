@@ -1,4 +1,5 @@
 from app.routes import app
+from app.exceptions import ForbiddenException
 
 import requests
 
@@ -21,19 +22,18 @@ class GithubService:
         request_url = f"{BASE_URL}/{GET_REPOS_ENDPOINT}" % organization
         app.logger.debug(f"request_url: {request_url}")
 
-        try:
-            # make request
-            headers = {}
-            if token:
-                headers["Authorization"] = f"token {token}"
-            r = requests.get(request_url, headers=headers)
-        except Exception as err:
-            app.logger.error(f"FAILURE - request failed - {request_url} - {err}")
-            raise Exception(f"FAILURE - request failed - {request_url}")
+        # make request
+        headers = {}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        r = requests.get(request_url, headers=headers)
 
-        if not r.status_code == 200:
+        if r.status_code == 403:
+            app.logger.error("FAILED - GitHub Forbidden")
+            raise ForbiddenException(f"FAILED - Access Forbidden to Github Organization: {organization}. (GitHub API rate limit may be exceeded)")
+        elif not r.status_code == 200:
             app.logger.error(f"FAILED to get GitHub Repositories for: {organization}")
-            return []
+            raise Exception(f"FAILURE - request failed - {request_url}")
 
         # return data
         return r.json()
@@ -47,19 +47,18 @@ class GithubService:
         request_url = f"{BASE_URL}/{GET_FOLLOWERS_ENDPOINT}" % organization
         app.logger.debug(f"request_url: {request_url}")
 
-        try:
-            # make request
-            headers = {}
-            if token:
-                headers["Authorization"] = f"token {token}"
-            r = requests.get(request_url, headers=headers)
-        except Exception as err:
-            app.logger.error(f"FAILURE - request failed - {request_url} - {err}")
-            raise Exception(f"FAILURE - request failed - {request_url}")
+        # make request
+        headers = {}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        r = requests.get(request_url, headers=headers)
 
-        if not r.status_code == 200:
+        if r.status_code == 403:
+            app.logger.error("FAILED - GitHub Forbidden")
+            raise ForbiddenException(f"FAILED - Access Forbidden to Github Organization: {organization}. (GitHub API rate limit may be exceeded)")
+        elif not r.status_code == 200:
             app.logger.error(f"FAILED to get GitHub Followers for: {organization}")
-            return []
+            raise Exception(f"FAILURE - request failed - {request_url}")
 
         # return data
         return r.json()
@@ -73,19 +72,18 @@ class GithubService:
         request_url = f"{BASE_URL}/{GET_LANGUAGES_ENDPOINT}" % (organization, repo)
         app.logger.debug(f"request_url: {request_url}")
 
-        try:
-            # make request
-            headers = {}
-            if token:
-                headers["Authorization"] = f"token {token}"
-            r = requests.get(request_url, headers=headers)
-        except Exception as err:
-            app.logger.error(f"FAILURE - request failed - {request_url} - {err}")
-            raise Exception(f"FAILURE - request failed - {request_url}")
+        # make request
+        headers = {}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        r = requests.get(request_url, headers=headers)
 
-        if not r.status_code == 200:
+        if r.status_code == 403:
+            app.logger.error("FAILED - GitHub Forbidden")
+            raise ForbiddenException(f"FAILED - Access Forbidden to Github Organization: {organization}. (GitHub API rate limit may be exceeded)")
+        elif not r.status_code == 200:
             app.logger.error(f"FAILED to get GitHub Languages for: {organization}/{repo}")
-            return []
+            raise Exception(f"FAILURE - request failed - {request_url}")
 
         # return data
         return r.json()
@@ -99,19 +97,18 @@ class GithubService:
         request_url = f"{BASE_URL}/{GET_TOPICS_ENDPOINT}" % (organization, repo)
         app.logger.debug(f"request_url: {request_url}")
 
-        try:
-            # make request
-            headers = {"Accept": "application/vnd.github.mercy-preview+json"}
-            if token:
-                headers["Authorization"] = f"token {token}"
-            r = requests.get(request_url, headers=headers)
-        except:
-            app.logger.error(f"FAILURE - request failed - {request_url}")
-            raise Exception(f"FAILURE - request failed - {request_url}")
+        # make request
+        headers = {"Accept": "application/vnd.github.mercy-preview+json"}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        r = requests.get(request_url, headers=headers)
 
-        if not r.status_code == 200:
+        if r.status_code == 403:
+            app.logger.error("FAILED - GitHub Forbidden")
+            raise ForbiddenException(f"FAILED - Access Forbidden to Github Organization: {organization}. (GitHub API rate limit may be exceeded)")
+        elif not r.status_code == 200:
             app.logger.error(f"FAILED to get GitHub Topics for: {organization}/{repo}")
-            return []
+            raise Exception(f"FAILURE - request failed - {request_url}")
 
         # return data
         return r.json()["names"]
