@@ -12,17 +12,19 @@ api = Namespace("Github", description="GitHub Profile API")
 
 # setup optional header
 parser = api.parser()
-parser.add_argument('X-GITHUB-TOKEN', location='headers')
+parser.add_argument("X-GITHUB-TOKEN", location="headers")
+
+# setup required args
+parser.add_argument("organization", required=True, location="args")
 
 
-@api.route("/<string:profileName>")
-@api.param("profileName", "Profile Name")
+@api.route("/profile")
 @api.expect(parser)
 class GithubResource(Resource):
     """ Github """
 
     @responds(schema=GitHubProfileSchema)
-    def get(self, profileName: str) -> Response:
+    def get(self) -> Response:
         """
         Get GitHub Profile
         """
@@ -30,6 +32,6 @@ class GithubResource(Resource):
         app.logger.info("GET GitHub Profile")
 
         args = parser.parse_args()
-        res = GithubService.get_profile(args["X-GITHUB-TOKEN"], profileName)
+        res = GithubService.get_profile(args["X-GITHUB-TOKEN"], args["organization"])
 
         return res

@@ -12,18 +12,22 @@ GET_WATCHERS_ENDPOINT = "repositories/%s/%s/watchers"
 
 class BitbucketService:
     @staticmethod
-    def get_repos(name: str):
-        app.logger.debug(f"BitbucketService - get_repos - name: {name}")
+    def get_repos(team: str):
+        app.logger.debug(f"BitbucketService - get_repos - team: {team}")
 
         # build url for the needed request
-        request_url = f"{BASE_URL}/{GET_REPOS_ENDPOINT}" % name
+        request_url = f"{BASE_URL}/{GET_REPOS_ENDPOINT}" % team
         app.logger.debug(f"request_url: {request_url}")
 
-        # make request
-        r = requests.get(request_url)
+        try:
+            # make request
+            r = requests.get(request_url)
+        except:
+            app.logger.error(f"FAILURE - request failed - {request_url}")
+            raise Exception(f"FAILURE - request failed - {request_url}")
 
         if not r.status_code == 200:
-            app.logger.error(f"FAILED to get Bitbucket Repositories for: {name}")
+            app.logger.error(f"FAILED to get Bitbucket Repositories for: {team}")
             return []
 
         # return data
@@ -31,18 +35,22 @@ class BitbucketService:
 
 
     @staticmethod
-    def get_watchers_count(name: str, repo: str):
-        app.logger.debug(f"BitbucketService - get_watchers - name: {name}, repo: {repo}")
+    def get_watchers_count(team: str, repo: str):
+        app.logger.debug(f"BitbucketService - get_watchers - team: {team}, repo: {repo}")
 
         # build url for the needed request
-        request_url = f"{BASE_URL}/{GET_WATCHERS_ENDPOINT}" % (name, repo)
+        request_url = f"{BASE_URL}/{GET_WATCHERS_ENDPOINT}" % (team, repo)
         app.logger.debug(f"request_url: {request_url}")
 
-        # make request
-        r = requests.get(request_url)
+        try:
+            # make request
+            r = requests.get(request_url)
+        except:
+            app.logger.error(f"FAILURE - request failed - {request_url}")
+            raise Exception(f"FAILURE - request failed - {request_url}")
 
         if not r.status_code == 200:
-            app.logger.error(f"FAILED to get Bitbucket Watchers for: {name}/{repo}")
+            app.logger.error(f"FAILED to get Bitbucket Watchers for: {team}/{repo}")
             return 0
 
         # return watchers
@@ -50,24 +58,33 @@ class BitbucketService:
 
 
     @staticmethod
-    def get_profile(name: str):
-        app.logger.info(f"BitbucketService - get_bitbucket_profile - name: {name}")
+    def get_profile(team: str):
+        app.logger.info(f"BitbucketService - get_bitbucket_profile - team: {team}")
 
-        repos = BitbucketService.get_repos(name)
+        # create profile object to return
+        profile = BitbucketService.create_empty_profile()
 
-        languages = set({})
-        watchers_count = 0
+        repos = BitbucketService.get_repos(team)
 
+        # populate profile values
+        profile["repo_count"] = len(repos)
+
+        # update values for each individual repo
         for repo in repos:
-            # add language if needed (always lowercase)
-            languages.add(repo["language"].lower())
+            profile["languages"].add(repo["language"].lower())
 
-            watchers_count += BitbucketService.get_watchers_count(name, repo["name"])
+            profile["watchers_count"] += BitbucketService.get_watchers_count(team, repo["name"])
 
-        profile = {
-            "repo_count": len(repos),
-            "languages": languages,
-            "watchers_count": watchers_count
-        }
+        return profile
+
+
+    @staticmethod
+    def create_empty_profile():
+        profile = {}
+
+        # set default values
+        profile["repo_count"] = 0
+        profile["languages"] = set({})
+        profile["watchers_count"] = 0
 
         return profile
