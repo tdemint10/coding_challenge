@@ -35,7 +35,9 @@ curl -i "http://127.0.0.1:5000/health-check"
 
 ### Swagger
 
-The Git Profile API can also be accessed directly through Swagger: [Git Profile API](http://127.0.0.1:5000/)
+[Git Profile API](http://127.0.0.1:5000/)
+
+The Git Profile API Documentation can be seen generated automatically on this Swagger page. The requests can also be run directly here.
 
 ## Request Examples
 
