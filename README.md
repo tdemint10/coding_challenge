@@ -2,6 +2,11 @@
 
 A coding challenge solution to get the Git Profile for a user/organization
 
+## Assumptions
+- Running Python 3.6
+- Running Flask 1.0.2
+- Team/Organization exist GitHub/Bitbucket
+
 ## Install:
 
 Create the virtual environment with conda:
